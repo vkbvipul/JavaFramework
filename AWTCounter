@@ -1,0 +1,185 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.regex.Pattern;
+
+public class AWTCounter extends Frame implements ActionListener, WindowListener, 
+												 MouseListener, MouseMotionListener, KeyListener
+{
+ private Button btnCountUp,btnCountDwn,btnCountRst,btnNestedCounter;
+ private int count = 0,sum = 0,countNested = 0;
+ private TextField txtCount,txtSumI,txtSumO,txtMoveX,txtMoveY,txtMouseX,txtMouseY,txtKey,txtNestedCounter;
+ private TextArea txtaKey;
+ private Label lblCount,lblMouseX,lblMouseY,lblMoveX, lblMoveY,lblKey;
+ private String Number;
+ private boolean isNumber = false;
+ 
+ public AWTCounter()
+ {
+	 //setLayout(new FlowLayout());
+	 setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+	 //setLayout(new GridLayout(6,3,2,2));
+	 lblCount = new Label("Counter");
+	 add(lblCount);
+	 
+	 txtCount = new TextField(count + "",2);
+	 txtCount.setEditable(false);
+	 add(txtCount);
+	 
+	 btnCountUp = new Button("Count Up !!");
+	 add(btnCountUp);
+	 btnCountDwn = new Button("Count Down !!");
+	 add(btnCountDwn);
+	 btnCountRst = new Button("Reset");
+	 add(btnCountRst);
+	 
+	 //btnCountUp.setActionCommand("Count");
+	 //Below are Action Listeners using Anonymous Inner Class
+	 btnCountUp.addActionListener(new ActionListener()
+			 {
+				@Override public void actionPerformed(ActionEvent e) {
+					++count;
+					txtCount.setText(count + "");					
+				}
+			 });
+	 
+	 btnCountDwn.addActionListener(new ActionListener() {
+		@Override public void actionPerformed(ActionEvent e) {
+			--count;
+			txtCount.setText(count + "");
+		}
+	 });
+	 btnCountRst.addActionListener(new ActionListener() {
+		@Override public void actionPerformed(ActionEvent e) {
+			count = 0;
+			txtCount.setText(count + "");
+		}
+		 
+	 });
+	 txtSumI = new TextField(10);
+	 add(txtSumI);
+	 
+	 txtSumO = new TextField(sum + "",10);
+	 txtSumO.setEditable(false);
+	 add(txtSumO);
+
+	 txtMouseX = new TextField(10);
+	 txtMouseX.setEditable(false);
+	 txtMouseY = new TextField(10);
+	 txtMouseY.setEditable(false);
+	 lblMouseX = new Label("X Co-ord: ");
+	 lblMouseY = new Label("Y Co-ord: ");
+     add(lblMouseX);
+     add(txtMouseX);
+     add(lblMouseY);
+     add(txtMouseY);
+	 
+     lblMoveX = new Label("Cursor on X:Y - ");
+     add(lblMoveX);
+     txtMoveX = new TextField(10);
+     add(txtMoveX);
+     txtMoveY = new TextField(10);
+     add(txtMoveY);
+     
+     lblKey = new Label("Enter Text: ");
+     add(lblKey);
+     txtKey = new TextField(10);
+     add(txtKey);
+     txtaKey = new TextArea(5, 40);
+     add(txtaKey);
+     
+     //Working with NESTED CLASS
+     add(new Label("Checking Nested Class (COUNTER + 3)"));
+     txtNestedCounter = new TextField(10);
+     txtNestedCounter.setEditable(false);
+     txtNestedCounter.setText(0 + "");
+     add(txtNestedCounter);
+     btnNestedCounter = new Button("NESTED COUNT (+3)");
+     add(btnNestedCounter);
+     btnNestedCounter.addActionListener(new NestClass());
+     ////WORKING WITH NESTED CLASS
+     
+     //Same can be achieved using Anonymous Inner class.
+     //OR from JDK 8 onwards, same can be achieved using LAMBDA expression 
+     //btnCount.addActionListener(evt -> tfCount.setText(++count + ""));
+	      
+	 txtSumI.addActionListener(this);
+	 addWindowListener(this);
+	 addMouseListener(this);
+	 addMouseMotionListener(this);
+	 txtKey.addKeyListener(this);
+	 	 
+	 setTitle("AWT Trial1");
+	 setSize(500,300);
+	 setVisible(true);
+ }
+ 
+ @Override public void actionPerformed(ActionEvent Evt){
+	 String a = Evt.getActionCommand();
+	 if(a == "Count") //To check for Action Command
+	 {
+		 ++count;
+		 txtCount.setText(count + "");
+	 }
+	 else
+	 {
+		 Number = txtSumI.getText();
+		 //To check for blank input/only Numeric being passed in Textbox
+		 isNumber = Pattern.matches("[0-9-+]+", Number);
+		 if(isNumber)
+		 {
+			 sum = sum + Integer.parseInt(txtSumI.getText());
+		 }
+		 txtSumO.setText(sum + "");
+		 txtSumI.setText("");
+		 isNumber = false;
+	 }
+ }
+ 
+ public static void main(String args[]){
+	 new AWTCounter();
+ }
+ 
+//WindowListener Methods
+@Override public void windowClosing(WindowEvent evt) {System.exit(0);	}
+@Override public void windowClosed(WindowEvent evt) {}
+@Override public void windowIconified(WindowEvent evt) {}
+@Override public void windowDeiconified(WindowEvent evt) {}
+@Override public void windowActivated(WindowEvent evt) {}
+@Override public void windowDeactivated(WindowEvent evt) {}
+@Override public void windowOpened(WindowEvent evt) {}
+
+//MouseListener Methods
+@Override
+public void mouseClicked(MouseEvent arg0){
+txtMouseX.setText(arg0.getX() + "");
+txtMouseY.setText(arg0.getY() + "");
+}
+@Override public void mouseEntered(MouseEvent arg0) {}
+@Override public void mouseExited(MouseEvent arg0) {}
+@Override public void mousePressed(MouseEvent arg0) {}
+@Override public void mouseReleased(MouseEvent arg0) {}
+
+//MouseMotionListener Methods
+@Override public void mouseDragged(MouseEvent arg0) {}
+@Override public void mouseMoved(MouseEvent arg0)
+{
+	txtMoveX.setText(arg0.getX() + "");
+	txtMoveY.setText(arg0.getY() + "");
+}
+
+//KeyListener Methods
+@Override public void keyPressed(KeyEvent arg0) {}
+@Override public void keyReleased(KeyEvent arg0) {}
+@Override public void keyTyped(KeyEvent arg0) {
+	txtaKey.append("You have typed "+ arg0.getKeyChar() + "\n");
+}
+
+private class NestClass implements ActionListener{
+@Override public void actionPerformed(ActionEvent arg0) {
+		countNested = countNested + 3;
+		txtNestedCounter.setText(countNested + "");
+	}
+	
+}
+
+}
